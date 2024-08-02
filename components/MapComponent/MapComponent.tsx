@@ -1,63 +1,55 @@
 import React, { useEffect, useState } from "react"
 import { PermissionsAndroid, View } from "react-native"
-import { LeafletView } from "react-native-leaflet-view"
-import { Text } from 'react-native';
+import { LatLng, LeafletView, WebviewLeafletMessage } from "react-native-leaflet-view"
+import { Text, Alert } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
 
 
 
 interface IMapComponentProps {
-    heightMap?: number;
+  heightMap?: number;
+  zoom: number;
 }
 
 export const MapComponent = (props: IMapComponentProps) => {
-    const [userLocation, setUserLocation] = useState([0, 0])
-    const [selectedPin, setSelectedPin] = useState(null)
+  const [userLocation, setUserLocation] = useState({ lat: 0, lng: 0 })
+  const { zoom } = props;
 
-    useEffect(() => {
+  const changePosition = (lat, lng) => {
+    setUserLocation({ lat, lng })
+  }
 
-        const load = async () => {
-            try {
-                const granted = await PermissionsAndroid.request(
-                  PermissionsAndroid.PERMISSIONS.CAMERA,
-                  {
-                    title: 'Cool Photo App Camera Permission',
-                    message:
-                      'Cool Photo App needs access to your camera ' +
-                      'so you can take awesome pictures.',
-                    buttonNeutral: 'Ask Me Later',
-                    buttonNegative: 'Cancel',
-                    buttonPositive: 'OK',
-                  },
-                );
-                if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                  console.log('You can use the camera');
-                } else {
-                  console.log('Camera permission denied');
-                }
-              } catch (err) {
-                console.warn(err);
-              }
-        }
+  useEffect(() => {
+    Geolocation.requestAuthorization(() => {
+      Geolocation.getCurrentPosition((value) => {
+        changePosition(value.coords.latitude, value.coords.longitude);
+      })
+    }, (e) => {
+      console.log(e)
+      Alert.alert('Permisão não autorizada')
+    })
+  }, [])
 
-            load();
-        }, [])
+  const processarMensagemRecebida = (m: WebviewLeafletMessage) => {
+    console.log('mensagem:', m)
+  }
 
+  return (
+    <>
+      <View>
+        <Text>
+          Componente de Mapa
+        </Text>
+        <Text>{`Centro de Mapa ${userLocation['lat'] + '-' + userLocation['lng']}`}</Text>
+      </View>
+      <View style={{ width: '100%', height: props.heightMap ? props.heightMap : '100%' }}>
 
-    return (
-        <View style={{ width: '100%', height: props.heightMap ? props.heightMap : '100%' }}>
-            <View>
-                <Text>
-                    Componente de Mapa
-                </Text>
-                <Text>{`Centro de Mapa ${userLocation[0] + '-' + userLocation[1]}`}</Text>
-            </View>
-            <View>
-                <LeafletView
-                    onMessageReceived={(m => { console.log(m) })}
-                    mapCenterPosition={userLocation}
-                />
-            </View>
-        </View>
-    )
+        <LeafletView
+          onMessageReceived={((m:WebviewLeafletMessage) => {processarMensagemRecebida(m)})}
+          mapCenterPosition={userLocation}
+          zoom={zoom}
+        />
+      </View>
+    </>
+  )
 }
