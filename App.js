@@ -23,6 +23,7 @@ const App = () => {
   const [permissaoMapas, setPermissaoMapas] = useState(false);
 
   const liberarPermissao = async () => {
+    console.log('clicou no marcador')
     try {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
