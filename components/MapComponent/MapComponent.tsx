@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react"
 import { View } from "react-native"
-import { LatLng, LeafletView, MapMarker, WebviewLeafletMessage } from "react-native-leaflet-view"
 import { Text, Alert } from 'react-native';
 import Geolocation from '@react-native-community/geolocation';
+import LeafletView from "../LeafletView";
+import { MapMarker, WebviewLeafletMessage } from "../LeafletView/typescript/LeafletView/types";
 
 
 
@@ -33,13 +34,25 @@ export const MapComponent = (props: IMapComponentProps) => {
         title: title,
         icon: 'https://img.icons8.com/doodle/48/apple.png',
         position: { lat:-19.873518825746384, lng:-43.9863192304369 },
-      }
+      },
+      {
+        id: `key_temp2`,
+        title: title,
+        icon: 'https://img.icons8.com/doodle/48/apple.png',
+        position: { lat:-19.87428181041381, lng:-43.98590837396227 },
+      },
+      {
+        id: `key_temp3`,
+        title: title,
+        icon: 'https://img.icons8.com/doodle/48/apple.png',
+        position: { lat:-19.871401816138007, lng:-43.990417483736806}
+      },
     ]
     setMapMarkers(mapMarker);
   }
 
   useEffect(() => {
-    Geolocation.requestAuthorization(() => {
+    Geolocation.requestAuthorization(async () => {
       Geolocation.getCurrentPosition((value) => {
         changePosition(value.coords.latitude, value.coords.longitude);
         adicionarMarcador('Posição do Usuário', value.coords.latitude, value.coords.longitude);
@@ -77,8 +90,7 @@ export const MapComponent = (props: IMapComponentProps) => {
           mapCenterPosition={userLocation}
           zoom={zoom}
           mapMarkers={mapMarkers}
-          doDebug
-        />
+          doDebug onError={undefined} onLoadEnd={undefined} onLoadStart={undefined} mapShapes={undefined} ownPositionMarker={undefined} androidHardwareAccelerationDisabled={undefined}        />
       </View>
     </>
   )

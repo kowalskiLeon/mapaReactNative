@@ -1,0 +1,22 @@
+import React from 'react';
+import { MapMarker, WebviewLeafletMessage, MapLayer, MapShape, OwnPositionMarker } from './types';
+import { LatLng } from 'react-leaflet';
+import { NativeSyntheticEvent } from 'react-native';
+import { WebViewError } from 'react-native-webview/lib/WebViewTypes';
+export declare type LeafletViewProps = {
+    renderLoading?: () => React.ReactElement;
+    onError?: (syntheticEvent: NativeSyntheticEvent<WebViewError>) => void;
+    onLoadEnd?: () => void;
+    onLoadStart?: () => void;
+    onMessageReceived?: (message: WebviewLeafletMessage) => void;
+    mapLayers?: MapLayer[];
+    mapMarkers?: MapMarker[];
+    mapShapes?: MapShape[];
+    mapCenterPosition?: LatLng;
+    ownPositionMarker?: OwnPositionMarker;
+    zoom?: number;
+    doDebug?: boolean;
+    androidHardwareAccelerationDisabled?: boolean;
+};
+declare const LeafletView: React.FC<LeafletViewProps>;
+export default LeafletView;
